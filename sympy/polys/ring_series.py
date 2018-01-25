@@ -1735,6 +1735,39 @@ def rs_tanh(p, x, prec):
     else:
         return rs_fun(p, _tanh, x, prec)
 
+
+def rs_Si(p, x, prec):
+    """
+    Sine integral of a series
+
+    Return the series expansion of the Sine Integral of ``p``, about 0.
+
+    Examples
+    ========
+
+    >>> from sympy.polys.domains import QQ
+    >>> from sympy.polys.rings import ring
+    >>> from sympy.polys.ring_series import rs_Si
+    >>> R, x, y = ring('x, y', QQ)
+    >>> rs_Si(x + x*y, x, 4)
+    x*(y+1) - 1/18*x**3*(y + 1)**3
+
+    See Also
+    ========
+
+    tanh
+    """
+    if rs_is_puiseux(p, x):
+        return rs_puiseux(rs_Si, p, x, prec)
+    R = x.ring
+    if not p:
+        return R(0)
+    t1 = rs_series_inversion(p, x, prec)
+    t2 = rs_mul(rs_sin(p, x, prec), t1, x, prec)
+
+    return rs_integrate(t2, x)
+
+
 def rs_newton(p, x, prec):
     """
     Compute the truncated Newton sum of the polynomial ``p``
